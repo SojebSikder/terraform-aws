@@ -82,6 +82,12 @@ resource "aws_instance" "ubuntu_server" {
   vpc_security_group_ids      = [aws_security_group.ec2_sg.id]
   associate_public_ip_address = false
 
+  root_block_device {
+    volume_type           = var.ec2_volume_type # type: "gp2", "gp3", "io1", etc.
+    volume_size           = var.ec2_volume_size # size in GB (example: 30)
+    delete_on_termination = true                # optional: automatically delete the volume when instance is terminated
+  }
+
   tags = {
     Name = var.ec2_instance_name
   }

@@ -22,7 +22,7 @@ variable "ec2_key_name" {
 
 variable "ec2_instance_type" {
   description = "Instance type for EC2"
-  default     = "t2.micro" # Free tier
+  default     = "t2.large"
 }
 
 variable "ec2_ami" {
@@ -33,6 +33,18 @@ variable "ec2_ami" {
 variable "ec2_instance_name" {
   description = "Name of the EC2 instance"
   default     = "seoulclinic"
+}
+
+variable "ec2_volume_size" {
+  description = "Volume size for EC2"
+  type        = number
+  default     = 30
+}
+
+variable "ec2_volume_type" {
+  description = "Volume type for EC2"
+  type        = string
+  default     = "gp2"
 }
 
 # RDS
