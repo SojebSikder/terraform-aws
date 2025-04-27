@@ -28,6 +28,21 @@ resource "aws_security_group" "ec2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -58,16 +73,31 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
+
 # EC2 Instance
 resource "aws_instance" "ubuntu_server" {
-  ami                    = var.ec2_ami
-  instance_type          = var.ec2_instance_type
-  key_name               = aws_key_pair.generated.key_name
-  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
+  ami                         = var.ec2_ami
+  instance_type               = var.ec2_instance_type
+  key_name                    = aws_key_pair.generated.key_name
+  vpc_security_group_ids      = [aws_security_group.ec2_sg.id]
+  associate_public_ip_address = false
 
   tags = {
     Name = var.ec2_instance_name
   }
+}
+
+# Create an Elastic IP (do NOT associate yet)
+resource "aws_eip" "ec2_eip" {
+  tags = {
+    Name = var.ec2_instance_name
+  }
+}
+
+# Associate Elastic IP with EC2
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.ubuntu_server.id
+  allocation_id = aws_eip.ec2_eip.id
 }
 
 # Data source to get all subnets in the VPC
@@ -93,7 +123,6 @@ resource "aws_db_instance" "postgres" {
   allocated_storage      = var.db_allocated_storage
   storage_type           = "gp2"
   engine                 = "postgres"
-  engine_version         = "17.2-R2"
   instance_class         = var.db_instance_type
   username               = var.db_username
   password               = var.db_password

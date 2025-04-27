@@ -5,7 +5,7 @@ variable "aws_region" {
 # EC2
 variable "ec2_key_name" {
   description = "EC2 Key Pair Name for SSH access"
-  default     = "seoulclinic-2"
+  default     = "seoulclinic"
 }
 
 variable "ec2_instance_type" {
@@ -20,7 +20,7 @@ variable "ec2_ami" {
 
 variable "ec2_instance_name" {
   description = "Name of the EC2 instance"
-  default     = "seoulclinic-2"
+  default     = "seoulclinic"
 }
 
 # RDS
@@ -46,4 +46,5 @@ variable "db_username" {
 
 variable "db_password" {
   description = "Password for RDS"
+  default     = "password"
 }
