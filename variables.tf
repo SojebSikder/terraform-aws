@@ -1,6 +1,18 @@
 variable "aws_region" {
-  default = "ap-northeast-2"
+  description = "AWS Region"
+  default     = "ap-northeast-2"
 }
+
+variable "aws_access_key" {
+  description = "AWS Access Key"
+  default     = "" # change this to your own access key
+}
+
+variable "aws_secret_key" {
+  description = "AWS Secret Key"
+  default     = "" # change this to your own secret key
+}
+
 
 # EC2
 variable "ec2_key_name" {
@@ -46,5 +58,5 @@ variable "db_username" {
 
 variable "db_password" {
   description = "Password for RDS"
-  default     = "password"
+  default     = "" # change this to your own password
 }
