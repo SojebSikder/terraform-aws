@@ -72,3 +72,9 @@ variable "db_password" {
   description = "Password for RDS"
   default     = "" # change this to your own password
 }
+
+# S3
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket"
+  default     = "bucket1" # change this to your own bucket name
+}

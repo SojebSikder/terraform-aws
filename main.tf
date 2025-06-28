@@ -125,6 +125,10 @@ resource "aws_db_subnet_group" "default" {
 }
 
 # RDS Instance
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 resource "aws_db_instance" "postgres" {
   allocated_storage      = var.db_allocated_storage
   storage_type           = "gp2"
@@ -141,4 +145,41 @@ resource "aws_db_instance" "postgres" {
   tags = {
     Name = var.db_instance_name
   }
+}
+
+# S3 Bucket
+resource "aws_s3_bucket" "public_bucket" {
+  bucket = "${var.s3_bucket_name}-${random_id.suffix.hex}"
+
+  tags = {
+    Name = "${var.s3_bucket_name}"
+  }
+}
+
+# Enable public access
+resource "aws_s3_bucket_public_access_block" "public_bucket_block" {
+  bucket = aws_s3_bucket.public_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# Set bucket policy to allow public read
+resource "aws_s3_bucket_policy" "public_read_policy" {
+  bucket = aws_s3_bucket.public_bucket.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = ["s3:GetObject"]
+        Resource  = "${aws_s3_bucket.public_bucket.arn}/*"
+      }
+    ]
+  })
 }
